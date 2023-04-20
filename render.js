@@ -1,0 +1,1 @@
+window.electron.receive("Keypad", (data) => {console.log(data)})
