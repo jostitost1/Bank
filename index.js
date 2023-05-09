@@ -28,11 +28,22 @@ app.get('/api/persoon', (req, res) => {
     });
 });
 
+app.get('/api/klant', (req, res) => {
+    // Voer een SQL-query uit
+    connection.query('SELECT * FROM klant', (err, results) => {
+        if (err) throw err;
+        // Retourneer de resultaten als JSON
+        res.json(results);
+    });
+});
+
+
 // Start de server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
    
 });
+
 
 
 
