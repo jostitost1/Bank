@@ -1,3 +1,4 @@
+const bodyParser = require('body-parser');
 const express = require('express');
 const mysql = require('mysql');
 
@@ -7,7 +8,7 @@ const connection = mysql.createConnection({
     user: 'bankje',
     port: 8001,
     password: '18IXPah8B@24FR',
-    database: 'dbob bank database'
+    database: 'dbob'
 });
 
 connection.connect((err) => {
@@ -37,12 +38,39 @@ app.get('/api/klant', (req, res) => {
     });
 });
 
+// Definieer een POST-endpoint
+app.post('/api/post/persoon', bodyParser.json(), (req, res) => {
+    const id = req.body.id;
+    const naam = req.body.naam;
+    const email = req.body.email;
+    const telefoonnummer = req.body.telefoonnummer;
+    const geboortejaar = req.body.geboortejaar;
+    const klantid = req.body.klantid;
+
+    var sql = "INSERT INTO dbob.persoon (id, naam, email, telefoonnummer, geboortejaar, klantid) VALUES (?)";
+    var values = [id, naam, email, telefoonnummer, geboortejaar, klantid];
+    
+    connection.query(sql, [values], (err, results) => {
+        
+        
+        if (err) console.log(err);
+        
+        else res.send("goeie");
+        // Retourneer de resultaten als JSON
+        //res.json(results);
+        //res.send("oke en nu");
+      
+    });
+});
+
 
 // Start de server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
    
 });
+
+
 
 
 
