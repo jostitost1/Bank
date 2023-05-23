@@ -15,9 +15,9 @@ body{
     text-decoration: none;
     display: inline-block;
     font-size: 32px;
-    width: 30%;
-    margin-right: 35%;
-    margin-left: 35%;
+    width: 25%;
+    margin-right: 37.5%;
+    margin-left: 37.5%;
     cursor: pointer;
     padding: 4%;
     margin-bottom: 2%;
@@ -36,9 +36,7 @@ h1{
     text-align: center; 
 }
 
-button{
-    text-align: center;
-}
+
 
 input{
     width: 20%;
@@ -57,3 +55,4 @@ img{
   
  
 }
+

@@ -1,3 +1,24 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // boilerplate code for electron..
 const {
     app,
@@ -17,8 +38,8 @@ async function createWindow() {
 
     // Create the browser window.
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 1920,
+        height: 1080,
         webPreferences: {
             nodeIntegration: true, // is default value after Electron v5
             contextIsolation: true, // protect against prototype pollution
@@ -55,21 +76,33 @@ ipcMain.handle('Keypad', async (event, arg) => {
 
 
 
+
+
+
+
 const { SerialPort } = require('serialport')
 
 // Create a port
-const port = new SerialPort({
+const Serial = new SerialPort({
   path: 'com7',
   baudRate: 9600,
 })
 
 
-port.on('data', function (err) {
+Serial.on('data', function (err) {
   if (err.toString()) {
      Keypad = err.toString()
      win.webContents.send("Keypad", Keypad)
     const Array = Keypad.split(":")
     process.stdout.write(Keypad)
+   // console.log("test");
+    
+ 
+
     // document.getElementById("myText").innerHTML = err.toString();
   }
 })
+
+
+
+

@@ -78,7 +78,7 @@ app.post('/api/post/klant', bodyParser.json(), (req, res) => {
     });
 });
 
-app.get('/api/pasid', (req, res) => {
+app.get('/api/pasid', bodyParser.json, (req, res) => {
 
     const pasid = req.params.pasid;
     const query = 'SELECT * FROM dbob.klant WHERE pasid = "${pasid}";';
@@ -108,11 +108,3 @@ app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
    
 });
-
-
-
-
-
-
-
-
