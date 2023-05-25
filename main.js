@@ -1,24 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // boilerplate code for electron..
 const {
     app,
@@ -60,8 +39,6 @@ app.on("ready", createWindow);
  */
 ipcMain.handle('Keypad', async (event, arg) => {
   return new Promise(function(resolve, reject) {
-  
-      
     if (true) {
         resolve(Keypad);
     } else {
@@ -71,20 +48,11 @@ ipcMain.handle('Keypad', async (event, arg) => {
 })
 
 
-
-
-
-
-
-
-
-
-
 const { SerialPort } = require('serialport')
 
 // Create a port
 const Serial = new SerialPort({
-  path: 'com7',
+  path: 'com8',
   baudRate: 9600,
 })
 
@@ -95,11 +63,6 @@ Serial.on('data', function (err) {
      win.webContents.send("Keypad", Keypad)
     const Array = Keypad.split(":")
     process.stdout.write(Keypad)
-   // console.log("test");
-    
- 
-
-    // document.getElementById("myText").innerHTML = err.toString();
   }
 })
 
