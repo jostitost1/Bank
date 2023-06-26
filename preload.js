@@ -7,18 +7,23 @@ const {
 contextBridge.exposeInMainWorld('electron', {
   send: (channel, data) => {
     // Controleer of het kanaal geldig is en stuur vervolgens het bericht met de gegeven data
-    let validChannels = ["Keypad"];
+    let validChannels = ["Keypad", "set-title", "passid", "saldo"];
+
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
     }
+    
   },
   receive: (channel, func) => {
     // Controleer of het kanaal geldig is en registreer vervolgens een callback-functie om berichten te ontvangen
-    let validChannels = ["Keypad"];
+    let validChannels = ["Keypad", "set-title", "passid", "saldo"];
     if (validChannels.includes(channel)) {
       ipcRenderer.on(channel, (event, ...args) => func(...args));
     }
+    
   }
+  
+
 })
 
 // All of the Node.js APIs are available in the preload process.

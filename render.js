@@ -1,30 +1,49 @@
 var paginaNaam = window.location.href.split('/').pop();
 console.log(paginaNaam)
-
-
+ipcRenderer.on('saldo', (event, data) => {
+    // Verwerk de gegevens in de frontend
+    console.log('Ontvangen gegevens:', data);
+    // Doe iets met de ontvangen gegevens
+  });
+  
 
 
 window.electron.receive("Keypad", (data) => {
-    console.log(data);
+    passid = data;
+            window.electron.send("passid", passid)
+          //  console.log('super fijn')
+
+    data = data.charAt(4)
+
+    
     value = document.getElementById("Knop").value = document.getElementById("Knop").value + data + "";
     switch(paginaNaam) {
         case 'index.html':
             if(data == "A"){
                window.location.href= 'begin.html'
+ 
             }
             
-          break;
+            break;
         case 'begin.html' :
+
+            
+
             if(data == "A"){
                 window.location.href= 'keuze.html'
-            }else if (data == "B"){
+            }
+            else if (data == "B"){
                 window.location.href = 'index.html'
             }
           
-          break;
+            break;
         case 'keuze.html' :
+            console.log(data)
             if(data == "A"){
-                window.location.href= 'SnelPinnen.html'
+                window.location.href= 'bon.html'
+                myDiv = 70;
+                window.electron.send("set-title", myDiv)     
+                console.log("hoi")         
             } else if  (data == "B"){
                 window.location.href = 'pinnen.html'
             } else if (data == "C"){
@@ -69,6 +88,8 @@ window.electron.receive("Keypad", (data) => {
         case 'bevestiging.html' :
                 if(data == "A"){
                     window.location.href= 'bon.html'
+
+                    
                 }else if (data == "B"){
                     window.location.href = 'keuze.html'
                 }
@@ -92,9 +113,14 @@ window.electron.receive("Keypad", (data) => {
 
 
 function myFunction() {
-    var b = document.getElementById('messageInput').value;
+    var b = document.getElementById('Knop').value;
     var url = './bevestiging.html?myValue=' + encodeURIComponent(b);
     document.location.href = url;
+
+
+
+    
+    
 }
 
 window.onload = function () {
@@ -105,8 +131,12 @@ window.onload = function () {
          tmp = params[i].split('=');
          data[tmp[0]] = tmp[1];
     }
-
+    
     document.getElementById('myDiv').innerHTML += data["myValue"];
+    console.log(document.getElementById('myDiv').innerHTML);
+    myDiv = document.getElementById('myDiv').innerHTML.split("€")[1]
+    window.electron.send("set-title", myDiv)
+    
 }
 
 

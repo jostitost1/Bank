@@ -1,12 +1,21 @@
+const bodyParser = require('body-parser');
+const express = require('express');
+const mysql = require('mysql');
+const https = require('http');
+
+
 // boilerplate code for electron..
 const {
     app,
     BrowserWindow,
-    ipcMain
+    ipcMain,
+    ipcRenderer
 } = require("electron");
 const path = require("path");  
 let win;
 let Keypad;
+let passid;
+let saldo;
 
 /**
  * make the electron window, and make preload.js accessible to the js
@@ -18,7 +27,7 @@ async function createWindow() {
     // Create the browser window.
     win = new BrowserWindow({
         width: 1920,
-        height: 1080,
+        height: 1000,
         webPreferences: {
             nodeIntegration: true, // is default value after Electron v5
             contextIsolation: true, // protect against prototype pollution
@@ -40,13 +49,115 @@ app.on("ready", createWindow);
 ipcMain.handle('Keypad', async (event, arg) => {
   return new Promise(function(resolve, reject) {
     if (true) {
-        resolve(Keypad);
+        resolve(Keypad)
+        console.log(Keypad);
     } else {
         reject("this didn't work!");
     }
   });  
 })
 
+
+
+const pasArary = []
+ipcMain.on('set-title', (event, arg) => {
+  console.log(arg);
+  
+  setTimeout(()=> sendDataToArduino(arg), 3000); // Example input data
+})
+
+let keypadBuffer = [];
+ipcMain.on('passid', (event, arg) => {
+
+  let key = Keypad.split(":");
+  if(key[0] == "key"){
+    console.log(arg.split(":")[1])
+    keypadBuffer.push(arg.split(":")[1].charAt(0)); 
+
+  }else passid = arg.split(":")[1].trim()
+  if (keypadBuffer.length === 4 ) { 
+    console.log(passid)
+    console.log()
+    
+    const data = JSON.stringify({
+      pasid: passid, 
+      pincode: keypadBuffer.toString().replaceAll(',',''),
+      
+    });
+
+    const options = {
+      hostname: '145.24.222.146',
+      port: '8239',
+      path: '/api/post/klant',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+
+    const option = {
+      hostname: '145.24.222.146',
+      port: '8239',
+      path: '/api/post/saldo',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    };
+    
+    const request = https.request(options, (response) => {
+      let responseData = '';
+      let passid = '';
+    
+      response.on('data', (chunk) => {
+        responseData += chunk;
+        passid += passid
+      });
+    
+      response.on('end', () => {
+       const saldo = JSON.parse(responseData);
+       console.log(saldo);
+      
+      });
+
+    });
+
+    const req = https.request(option, (res) => {
+      let responseData = '';
+      let passid = '';
+
+     res.on('data', (chunk) => {
+       responseData += chunk;
+       passid += passid
+       
+    });
+
+      res.on('end', () => {
+        const bedrag = JSON.parse(10.00)
+       // const saldo = JSON.parse(responseData);
+        console.log(saldo);
+        console.log("toch leuk")
+      })
+
+
+    });
+
+    keypadBuffer = [];
+    
+    request.on('error', (error) => {
+      console.error('Fout bij het maken van het HTTP-verzoek:', error);
+    });
+    
+    // req.write(data);
+    request.write(data);
+    request.end();
+    // req.end();
+  
+
+
+}
+
+});
 
 const { SerialPort } = require('serialport')
 
@@ -59,13 +170,22 @@ const Serial = new SerialPort({
 
 Serial.on('data', function (err) {
   if (err.toString()) {
-     Keypad = err.toString()
-     win.webContents.send("Keypad", Keypad)
+    Keypad = err.toString()
+    win.webContents.send("Keypad", Keypad)
+    
     const Array = Keypad.split(":")
-    process.stdout.write(Keypad)
-  }
-})
+   
+ console.log(Array[0])
+   //console.log(Array)
+   // console.log(JSON.stringify(Keypad))
+  }})
 
-
-
-
+  
+function sendDataToArduino(data) {
+  Serial.write(data.toString() + '\n', function (err) {
+    if (err) {
+      return console.log('Error writing to port: ', err.message);
+    }
+    console.log('Data sent:', data);
+  });
+}
