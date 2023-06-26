@@ -117,6 +117,10 @@ ipcMain.on('passid', (event, arg) => {
       response.on('end', () => {
        const saldo = JSON.parse(responseData);
        console.log(saldo);
+       setInterval(() => {
+        const data = saldo // haal de gegevens op vanuit de backend
+        win.send('DataUpdate', data);
+      }, 1000); // verzend gegevens elke 1 seconde
       
       });
 
@@ -134,7 +138,7 @@ ipcMain.on('passid', (event, arg) => {
 
       res.on('end', () => {
         const bedrag = JSON.parse(10.00)
-       // const saldo = JSON.parse(responseData);
+        const saldo = JSON.parse(responseData);
         console.log(saldo);
         console.log("toch leuk")
       })
@@ -148,10 +152,10 @@ ipcMain.on('passid', (event, arg) => {
       console.error('Fout bij het maken van het HTTP-verzoek:', error);
     });
     
-    // req.write(data);
-    request.write(data);
-    request.end();
-    // req.end();
+      req.write(data);
+    //request.write(data);
+    //request.end();
+      req.end();
   
 
 
@@ -178,6 +182,7 @@ Serial.on('data', function (err) {
  console.log(Array[0])
    //console.log(Array)
    // console.log(JSON.stringify(Keypad))
+   
   }})
 
   
@@ -186,6 +191,7 @@ function sendDataToArduino(data) {
     if (err) {
       return console.log('Error writing to port: ', err.message);
     }
+   
     console.log('Data sent:', data);
   });
 }

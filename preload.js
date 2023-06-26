@@ -7,7 +7,7 @@ const {
 contextBridge.exposeInMainWorld('electron', {
   send: (channel, data) => {
     // Controleer of het kanaal geldig is en stuur vervolgens het bericht met de gegeven data
-    let validChannels = ["Keypad", "set-title", "passid", "saldo"];
+    let validChannels = ["Keypad", "set-title", "passid", "saldo", "DataUpdate"];
 
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);
@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld('electron', {
   },
   receive: (channel, func) => {
     // Controleer of het kanaal geldig is en registreer vervolgens een callback-functie om berichten te ontvangen
-    let validChannels = ["Keypad", "set-title", "passid", "saldo"];
+    let validChannels = ["Keypad", "set-title", "passid", "saldo", "DataUpdate"];
     if (validChannels.includes(channel)) {
       ipcRenderer.on(channel, (event, ...args) => func(...args));
     }

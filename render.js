@@ -1,11 +1,22 @@
 var paginaNaam = window.location.href.split('/').pop();
 console.log(paginaNaam)
-ipcRenderer.on('saldo', (event, data) => {
-    // Verwerk de gegevens in de frontend
-    console.log('Ontvangen gegevens:', data);
-    // Doe iets met de ontvangen gegevens
-  });
-  
+
+
+function updateHTML(data) {
+    // Bijvoorbeeld: update een element met id 'myElement' met de ontvangen data
+     element = document.getElementById('myElement');
+    element.innerText = data;
+  }
+
+
+
+
+window.electron.receive('DataUpdate', (data) => {
+    updateHTML(data)
+    const objectString = JSON.stringify(data, null, 2);
+    myElement.textContent = objectString;
+    console.log(data)
+})
 
 
 window.electron.receive("Keypad", (data) => {
@@ -88,6 +99,8 @@ window.electron.receive("Keypad", (data) => {
         case 'bevestiging.html' :
                 if(data == "A"){
                     window.location.href= 'bon.html'
+                    // window.electron.send("set-title", myDiv)  
+                    
 
                     
                 }else if (data == "B"){
