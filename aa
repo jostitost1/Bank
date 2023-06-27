@@ -1,0 +1,41 @@
+app.post('/api/post/klant', bodyParser.json(), (req, res) => {
+  const pasid = req.body.pasid;
+  const saldo = parseFloat(req.body.saldo);
+
+  const sql = 'SELECT saldo FROM dbob.klant WHERE pasid = ?';
+  const values = [pasid];
+
+  connection.query(sql, values, (err, results) => {
+    if (err) {
+      console.log(err);
+      res.status(500).json({ error: 'Er is een fout opgetreden bij het uitvoeren van de query.' });
+    } else {
+
+        const saldo = parseFloat(results[0].saldo);
+        res.json({saldo: saldo });
+
+    }
+  });
+});
+
+app.post('/api/post/saldo', bodyParser.json(), (req, res) => {
+    const pasid = req.body.pasid;
+    const bedrag = req.body.bedrag;
+
+    const sql = 'UPDATE dbob.klant SET klant.saldo = klant.saldo - ? WHERE pasid = ?; SELECT saldo FROM dbob.klant WHERE pasid = ?;';
+    const values = [bedrag, pasid, pasid];
+
+    connection.query(sql, values, (err, results) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json({ error: 'Er is een fout opgetreden bij het uitvoeren van de query.' });
+        } else {
+            if (results.length > 0) {
+                const saldo = parseFloat(results[0].saldo);
+                res.json({ saldo: saldo });
+            } else {
+                res.status(404).json({ error: 'dom' });
+            }
+        }
+    });
+});

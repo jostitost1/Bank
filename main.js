@@ -15,7 +15,8 @@ const path = require("path");
 let win;
 let Keypad;
 let passid;
-let saldo;
+let bedrag;
+let x;
 
 /**
  * make the electron window, and make preload.js accessible to the js
@@ -62,7 +63,7 @@ ipcMain.handle('Keypad', async (event, arg) => {
 const pasArary = []
 ipcMain.on('set-title', (event, arg) => {
   console.log(arg);
-  
+  x = arg
   setTimeout(()=> sendDataToArduino(arg), 3000); // Example input data
 })
 
@@ -78,13 +79,19 @@ ipcMain.on('passid', (event, arg) => {
   if (keypadBuffer.length === 4 ) { 
     console.log(passid)
     console.log()
+    keypadBuffer.slice(4)
+    console
     
     const data = JSON.stringify({
       pasid: passid, 
       pincode: keypadBuffer.toString().replaceAll(',',''),
       
-    });
+        bedrag:x
 
+      
+      
+    });
+    console.log(x)
     const options = {
       hostname: '145.24.222.146',
       port: '8239',
@@ -127,36 +134,41 @@ ipcMain.on('passid', (event, arg) => {
     });
 
     const req = https.request(option, (res) => {
-      let responseData = '';
+      let resData = '';
       let passid = '';
 
      res.on('data', (chunk) => {
-       responseData += chunk;
-       passid += passid
+       resData += chunk;
+       passid += passid;
        
     });
 
       res.on('end', () => {
-        const bedrag = JSON.parse(10.00)
-        const saldo = JSON.parse(responseData);
+
+        const saldo = JSON.parse(resData);
         console.log(saldo);
-        console.log("toch leuk")
       })
 
 
     });
+    
 
     keypadBuffer = [];
+  
     
-    request.on('error', (error) => {
+    // request.on('error', (error) => {
+    //   console.error('Fout bij het maken van het HTTP-verzoek:', error);
+    // });
+
+    req.on('error', (error) => {
       console.error('Fout bij het maken van het HTTP-verzoek:', error);
     });
     
-      req.write(data);
-    //request.write(data);
-    //request.end();
-      req.end();
-  
+    req.write(data);
+    // request.write(data);
+    // request.end();
+    req.end();
+   
 
 
 }
