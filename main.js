@@ -88,14 +88,13 @@ ipcMain.on('passid', (event, arg) => {
   if (keypadBuffer.length === 6 ) { 
     console.log(passid)
     console.log()
-    // keypadBuffer.slice(4)
+    keypadBuffer.slice(0,-1)
     // console
     
     const data = JSON.stringify({
-      pasid: passid, 
-      pincode: keypadBuffer.toString().replaceAll(',',''),
-      
-        bedrag:x
+      pasid:passid, 
+      pincode:keypadBuffer.toString().replaceAll(',','').slice(2),
+      bedrag:x
 
       
       
@@ -133,10 +132,8 @@ ipcMain.on('passid', (event, arg) => {
       response.on('end', () => {
        const saldo = JSON.parse(responseData);
        console.log(saldo);
-       setInterval(() => {
-        const data = saldo // haal de gegevens op vanuit de backend
-        win.send('DataUpdate', data);
-      }, 1000); // verzend gegevens elke 1 seconde
+       console.log(data);
+       
       
       });
 
@@ -154,11 +151,15 @@ ipcMain.on('passid', (event, arg) => {
 
 
 
-      res.on('end', () => {
-        
-        const saldo = JSON.parse(resData);
-        console.log(saldo);
-      })
+        res.on('end', () => {
+          
+          const saldo = JSON.parse(resData);
+          console.log(saldo);
+          setInterval(() => {
+            const data = saldo // haal de gegevens op vanuit de backend
+            win.send('DataUpdate', data);
+          }, 1000); // verzend gegevens elke 1 seconde
+        })
 
 
     });
@@ -193,7 +194,7 @@ const { SerialPort } = require('serialport')
 
 // Create a port
 const Serial = new SerialPort({
-  path: '/dev/cu.usbserial-110',
+  path: 'COM8',
   baudRate: 9600,
 })
 
@@ -206,6 +207,7 @@ Serial.on('data', function (err) {
     const Array = Keypad.split(":")
    
  console.log(Array[0])
+ win.send('updatebegin', Array[0]);
    //console.log(Array)
    // console.log(JSON.stringify(Keypad))
    

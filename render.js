@@ -9,7 +9,15 @@ function updateHTML(data) {
   }
 
 
-
+window.electron.receive('updatebegin',(data) =>{
+    console.log(data)
+    switch(paginaNaam) {
+        case 'index.html':
+            if(data == "rfid"){
+               window.location.href= 'keuze.html'
+ 
+            }}
+})
 
 window.electron.receive('DataUpdate', (data) => {
     updateHTML(data)
@@ -41,7 +49,7 @@ window.electron.receive("Keypad", (data) => {
             
 
             if(data == "A"){
-                window.location.href= 'keuze.html'
+                window.location.href= 'bon.html'
             }
             else if (data == "B"){
                 window.location.href = 'index.html'
@@ -51,17 +59,23 @@ window.electron.receive("Keypad", (data) => {
         case 'keuze.html' :
             console.log(data)
             if(data == "A"){
-                window.location.href= 'bon.html'
+                window.location.href= 'begin.html'
                 myDiv = 70;
                 window.electron.send("set-title", myDiv)     
                 console.log("hoi")         
             } else if  (data == "B"){
                 window.location.href = 'pinnen.html'
             } else if (data == "C"){
-                window.location.href = 'saldo.html'
+                window.location.href = 'pincode.html'
             }else if (data == "D"){
                 window.location.href = 'begin.html'
             }
+            break;
+        case 'pincode.html':
+            if(data == "A"){
+                window.location.href= 'saldo.html'
+            }
+
             
             break;
         case 'SnelPinnen.html' :
@@ -90,7 +104,7 @@ window.electron.receive("Keypad", (data) => {
                 break;
         case 'pinnen.html' :
                 if(data == "A"){
-                    window.location.href= 'bevestiging.html'
+                    window.location.href= 'bevestiging.html',myFunction();
                 }else if (data == "B"){
                     window.location.href = 'keuze.html'
                 }

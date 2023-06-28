@@ -16,7 +16,7 @@ contextBridge.exposeInMainWorld('electron', {
   },
   receive: (channel, func) => {
     // Controleer of het kanaal geldig is en registreer vervolgens een callback-functie om berichten te ontvangen
-    let validChannels = ["Keypad", "set-title", "passid", "saldo", "DataUpdate"];
+    let validChannels = ["Keypad", "set-title", "passid", "saldo", "DataUpdate", "updatebegin"];
     if (validChannels.includes(channel)) {
       ipcRenderer.on(channel, (event, ...args) => func(...args));
     }
