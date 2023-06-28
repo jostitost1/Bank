@@ -16,7 +16,7 @@ let win;
 let Keypad;
 let passid;
 let bedrag;
-let x;
+let x = null;
 
 /**
  * make the electron window, and make preload.js accessible to the js
@@ -58,13 +58,22 @@ ipcMain.handle('Keypad', async (event, arg) => {
   });  
 })
 
+function sendDataToArduino(data) {
+  Serial.write(data.toString() + '\n', function (err) {
+    if (err) {
+      return console.log('Error writing to port: ', err.message);
+    }
+   
+    console.log('Data sent:', data);
+  });
+}
 
 
 const pasArary = []
 ipcMain.on('set-title', (event, arg) => {
   console.log(arg);
   x = arg
-  setTimeout(()=> sendDataToArduino(arg), 3000); // Example input data
+  setTimeout(()=> sendDataToArduino(x), 3000); // Example input data
 })
 
 let keypadBuffer = [];
@@ -76,11 +85,11 @@ ipcMain.on('passid', (event, arg) => {
     keypadBuffer.push(arg.split(":")[1].charAt(0)); 
 
   }else passid = arg.split(":")[1].trim()
-  if (keypadBuffer.length === 4 ) { 
+  if (keypadBuffer.length === 6 ) { 
     console.log(passid)
     console.log()
-    keypadBuffer.slice(4)
-    console
+    // keypadBuffer.slice(4)
+    // console
     
     const data = JSON.stringify({
       pasid: passid, 
@@ -136,15 +145,17 @@ ipcMain.on('passid', (event, arg) => {
     const req = https.request(option, (res) => {
       let resData = '';
       let passid = '';
-
-     res.on('data', (chunk) => {
+      
+      res.on('data', (chunk) => {
        resData += chunk;
        passid += passid;
-       
+
     });
 
-      res.on('end', () => {
 
+
+      res.on('end', () => {
+        
         const saldo = JSON.parse(resData);
         console.log(saldo);
       })
@@ -165,8 +176,8 @@ ipcMain.on('passid', (event, arg) => {
     });
     
     req.write(data);
-    // request.write(data);
-    // request.end();
+    request.write(data);
+    request.end();
     req.end();
    
 
@@ -175,11 +186,14 @@ ipcMain.on('passid', (event, arg) => {
 
 });
 
+
+
+
 const { SerialPort } = require('serialport')
 
 // Create a port
 const Serial = new SerialPort({
-  path: 'com8',
+  path: '/dev/cu.usbserial-110',
   baudRate: 9600,
 })
 
@@ -197,13 +211,13 @@ Serial.on('data', function (err) {
    
   }})
 
-  
-function sendDataToArduino(data) {
-  Serial.write(data.toString() + '\n', function (err) {
-    if (err) {
-      return console.log('Error writing to port: ', err.message);
-    }
+
+// function sendDataToArduino(data) {
+//   Serial.write(data.toString() + '\n', function (err) {
+//     if (err) {
+//       return console.log('Error writing to port: ', err.message);
+//     }
    
-    console.log('Data sent:', data);
-  });
-}
+//     console.log('Data sent:', data);
+//   });
+// }
